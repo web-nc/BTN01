@@ -108,7 +108,7 @@ function Profile({ info }) {
                   color="primary"
                   fullWidth
                   margin="dense"
-                  value={firstName}
+                  value={lastName}
                   onChange={(e) => {
                     setFirstName(e.target.value);
                   }}
@@ -120,7 +120,7 @@ function Profile({ info }) {
                   color="primary"
                   fullWidth
                   margin="normal"
-                  value={lastName}
+                  value={firstName}
                   onChange={(e) => {
                     setLastName(e.target.value);
                   }}

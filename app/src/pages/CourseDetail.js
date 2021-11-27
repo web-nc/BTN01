@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import CourseAssignment from "../components/CourseDetail/CourseAssignment/Assignment";
 import CourseDetailNavBar from "../components/CourseDetail/CourseDetailNavBar/";
 import CourseInfo from "../components/CourseDetail/CourseInfo/";
 import CoursePeople from "../components/CourseDetail/CoursePeople/";
@@ -44,6 +45,7 @@ export default function CourseDetail() {
         <Route path="info" element={<CourseInfo role={role} />} />
         {/* <Route path="grades" /> */}
         <Route path="people" element={<CoursePeople />} />
+        <Route path="assignment" element={<CourseAssignment />} />
         <Route
           path="setting"
           element={

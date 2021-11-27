@@ -7,7 +7,15 @@ export default function MidComp({ role }) {
   const classes = useStyles();
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1, flexBasis: 0, justifyContent: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexGrow: 1,
+        flexBasis: 0,
+        justifyContent: "center",
+      }}
+    >
       <NavLink end to="info" className={classes.navLink}>
         <Button color="inherit">Chi tiết</Button>
       </NavLink>
@@ -17,7 +25,12 @@ export default function MidComp({ role }) {
       <NavLink end to="people" className={classes.navLink}>
         <Button color="inherit">Mọi người</Button>
       </NavLink>
-      {role && role !== "STUDENT" && (
+      {role && (role === "TEACHER" || role === "OWNER") && (
+        <NavLink end to="assignment" className={classes.navLink}>
+          <Button color="inherit">Bài tập</Button>
+        </NavLink>
+      )}
+      {role && (role === "TEACHER" || role === "OWNER") && (
         <NavLink end to="setting" className={classes.navLink}>
           <Button color="inherit">Cài đặt</Button>
         </NavLink>

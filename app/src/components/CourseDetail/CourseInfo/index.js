@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import React from "react";
 import { useSelector } from "react-redux";
 import CodeCard from "./InfoCode";
+import InfoGrade from "./InfoGrade";
 import InfoHeader from "./InfoHeader";
 import InvitationCard from "./InvitationCard";
 
@@ -27,6 +28,7 @@ export default function CourseInfo({ role }) {
       </Grid>
       <Grid item xs={12} md={3}>
         <CodeCard code={course.code} />
+        <InfoGrade />
       </Grid>
       {role === "STUDENT" ? (
         <div className="notificationCourse">
