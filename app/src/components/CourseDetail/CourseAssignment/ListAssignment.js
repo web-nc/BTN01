@@ -33,8 +33,7 @@ function ListAssignment({
             >
               {assignment.map((item, index) => {
                 return (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {/* draggbleId must be string */}
+                  <Draggable key={item._id} draggableId={item._id} index={index} >
                     {(provided, snapshot) => {
                       return (
                         <div
@@ -61,7 +60,7 @@ function ListAssignment({
                               label="Tên"
                               value={
                                 onEditModeIndex !== index
-                                  ? item.title
+                                  ? item.name
                                   : tempAssignmentTitle
                               }
                               fullWidth
@@ -79,7 +78,7 @@ function ListAssignment({
                               fullWidth
                               value={
                                 onEditModeIndex !== index
-                                  ? item.grade
+                                  ? item.weight
                                   : tempAssignmentGrade
                               }
                               onChange={(e) => {
@@ -142,7 +141,6 @@ function ListAssignment({
                   </Draggable>
                 );
               })}
-              {/* placeholder hold space of column if move the item */}
               {provided.placeholder}
             </div>
           );

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import CourseInfo from "../components/CourseDetail/CourseInfo/";
 import CoursePeople from "../components/CourseDetail/CoursePeople/";
 import CourseSetting from "../components/CourseDetail/CourseSetting";
 import { getOneCourse } from "../services/course";
+import { getAssignments } from "../services/assignment";
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -16,7 +17,14 @@ export default function CourseDetail() {
     (state) => state.course.item
   );
 
+  const [assignments, setAssignments] = useState([]);
+  const handleAssignmentsChange = (newAssignments) => {
+    setAssignments(newAssignments);
+  }
+
   useEffect(() => {
+    getAssignments(id).then(res => setAssignments(res.data.assignments));
+
     dispatch(async (dispatch) => {
       return getOneCourse(id).then((res) => {
         if (res.status === 200) {
@@ -42,10 +50,10 @@ export default function CourseDetail() {
 
       <Routes>
         <Route path="/*" element={<Navigate to="/404" />} />
-        <Route path="info" element={<CourseInfo role={role} />} />
+        <Route path="info" element={<CourseInfo role={role} assignments={assignments} />} />
         {/* <Route path="grades" /> */}
         <Route path="people" element={<CoursePeople />} />
-        <Route path="assignment" element={<CourseAssignment />} />
+        <Route path="assignment" element={<CourseAssignment assignments={assignments} handleAssignmentsChange={handleAssignmentsChange} />} />
         <Route
           path="setting"
           element={

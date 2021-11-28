@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import ListAssignment from "./ListAssignment";
 import NewAssignment from "./NewAssignment";
 
-function Assignment() {
-  const assignmentList = useSelector((state) => state.assignment.items);
-  const dispatch = useDispatch();
-
-  const [assignment, setAssignment] = useState(assignmentList);
+function Assignment({ assignments, handleAssignmentsChange }) {
   const [newAssignmentTitle, setNewAssignmentTitle] = useState("");
   const [newAssignmentGrade, setNewAssignmentGrade] = useState("");
   const [onEditModeIndex, setOnEditModeIndex] = useState(-1);
@@ -17,65 +12,60 @@ function Assignment() {
   const onDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
+    if (source.index === destination.index) return;
 
-    const copiedItems = [...assignment];
+    const copiedItems = [...assignments];
     const [removed] = copiedItems.splice(source.index, 1);
     copiedItems.splice(destination.index, 0, removed);
-    setAssignment(copiedItems);
-    // console.log(copiedItems);
-    dispatch({
-      type: "ASSIGNMENT_UPDATE",
-      payload: copiedItems,
-    });
+    handleAssignmentsChange(copiedItems);
+    const firstIndex = (source.index < destination.index) ? source.index + 1 : destination.index + 1;
+    const secondIndex = (source.index < destination.index) ? destination.index + 1 : source.index + 1;
+    console.log(firstIndex, secondIndex);
+    // updateAssignmentsOrder
   };
 
   const handleEditAssignment = (index) => {
     setOnEditModeIndex(index);
-    setTempAssignmentTitle(assignment[index].title);
-    setTempAssignmentGrade(assignment[index].grade);
+    setTempAssignmentTitle(assignments[index].title);
+    setTempAssignmentGrade(assignments[index].grade);
   };
 
   const handleSaveAssignment = (index) => {
     setOnEditModeIndex(-1);
-    const currentAssignment = { ...assignment[index] };
+    const currentAssignment = { ...assignments[index] };
     currentAssignment.title = tempAssignmentTitle;
     currentAssignment.grade = tempAssignmentGrade;
 
-    const list1 = assignment.slice(0, index);
-    const list2 = assignment.slice(index + 1);
+    const list1 = assignments.slice(0, index);
+    const list2 = assignments.slice(index + 1);
     const newAssignment = list1.concat(currentAssignment).concat(list2);
-    setAssignment(newAssignment);
+    handleAssignmentsChange(newAssignment);
+    // updateAssignment
   };
 
   const handleDeleteAssignment = (index) => {
-    const list1 = assignment.slice(0, index);
-    const list2 = assignment.slice(index + 1);
+    const list1 = assignments.slice(0, index);
+    const list2 = assignments.slice(index + 1);
     const newAssignment = list1.concat(list2);
-    setAssignment(newAssignment);
-    dispatch({
-      type: "ASSIGNMENT_REMOVE",
-      payload: newAssignment,
-    });
+    handleAssignmentsChange(newAssignment);
+    // deleteAssignment
   };
 
   const handleCreateNewAssignment = (e) => {
     e.preventDefault();
     if (!(newAssignmentTitle && newAssignmentGrade)) return;
-    const newId = (assignment.length + 1).toString();
+    const newId = (assignments.length + 1).toString();
     const newAssignment = {
       id: newId,
       title: newAssignmentTitle,
       grade: newAssignmentGrade,
     };
-    const newAssignmentList = [...assignment];
+    const newAssignmentList = [...assignments];
     newAssignmentList.push(newAssignment);
-    setAssignment(newAssignmentList);
+    handleAssignmentsChange(newAssignmentList);
     setNewAssignmentGrade("");
     setNewAssignmentTitle("");
-    dispatch({
-      type: "ASSIGNMENT_UPDATE",
-      payload: newAssignmentList,
-    });
+    // createAssignment
   };
 
   return (
@@ -92,7 +82,7 @@ function Assignment() {
       >
         <ListAssignment
           onDragEnd={onDragEnd}
-          assignment={assignment}
+          assignment={assignments}
           onEditModeIndex={onEditModeIndex}
           tempAssignmentTitle={tempAssignmentTitle}
           setTempAssignmentTitle={setTempAssignmentTitle}
