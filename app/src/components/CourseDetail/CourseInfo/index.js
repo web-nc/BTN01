@@ -6,7 +6,7 @@ import InfoGrade from "./InfoGrade";
 import InfoHeader from "./InfoHeader";
 import InvitationCard from "./InvitationCard";
 
-export default function CourseInfo({ role, course }) {
+export default function CourseInfo({ role, course, assignments }) {
   const classes = useStyles();
 
   return (
@@ -26,7 +26,7 @@ export default function CourseInfo({ role, course }) {
       </Grid>
       <Grid item xs={12} md={3}>
         <CodeCard code={course.code} />
-        <InfoGrade />
+        <InfoGrade assignments={assignments} />
       </Grid>
       {role === "STUDENT" ? (
         <div className="notificationCourse">

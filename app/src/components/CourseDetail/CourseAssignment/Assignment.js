@@ -1,81 +1,85 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 import ListAssignment from "./ListAssignment";
 import NewAssignment from "./NewAssignment";
 
-function Assignment() {
-  const assignmentList = useSelector((state) => state.assignment.items);
-  const dispatch = useDispatch();
+import { updateAssignmentOrder, updateAssignment, createAssignment, deleteAssignment } from '../../../services/assignment';
 
-  const [assignment, setAssignment] = useState(assignmentList);
-  const [newAssignmentTitle, setNewAssignmentTitle] = useState("");
-  const [newAssignmentGrade, setNewAssignmentGrade] = useState("");
-  const [onEditModeIndex, setOnEditModeIndex] = useState(-1);
-  const [tempAssignmentTitle, setTempAssignmentTitle] = useState("");
-  const [tempAssignmentGrade, setTempAssignmentGrade] = useState("");
+
+function Assignment({ courseId, assignments, handleAssignmentsChange }) {
 
   const onDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
+    if (source.index === destination.index) return;
 
-    const copiedItems = [...assignment];
+    const copiedItems = [...assignments];
     const [removed] = copiedItems.splice(source.index, 1);
     copiedItems.splice(destination.index, 0, removed);
-    setAssignment(copiedItems);
-    // console.log(copiedItems);
-    dispatch({
-      type: "ASSIGNMENT_UPDATE",
-      payload: copiedItems,
+    handleAssignmentsChange(copiedItems);
+
+    const data = {
+      courseId,
+      sourceIndex: source.index + 1,
+      destinationIndex: destination.index + 1
+    }
+    updateAssignmentOrder(data).catch(err => console.log(err));
+
+  };
+
+  const handleUpdateAssignment = (index, data) => {
+    return new Promise((resolve,reject) => {
+      updateAssignment(data).then(res => {
+        const currentAssignment = { ...assignments[index] };
+        currentAssignment.name = data.name;
+        currentAssignment.weight = data.weight;
+  
+        const list1 = assignments.slice(0, index);
+        const list2 = assignments.slice(index + 1);
+        const newAssignment = list1.concat(currentAssignment).concat(list2);
+        handleAssignmentsChange(newAssignment);
+        resolve(true);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      });
     });
   };
 
-  const handleEditAssignment = (index) => {
-    setOnEditModeIndex(index);
-    setTempAssignmentTitle(assignment[index].title);
-    setTempAssignmentGrade(assignment[index].grade);
-  };
-
-  const handleSaveAssignment = (index) => {
-    setOnEditModeIndex(-1);
-    const currentAssignment = { ...assignment[index] };
-    currentAssignment.title = tempAssignmentTitle;
-    currentAssignment.grade = tempAssignmentGrade;
-
-    const list1 = assignment.slice(0, index);
-    const list2 = assignment.slice(index + 1);
-    const newAssignment = list1.concat(currentAssignment).concat(list2);
-    setAssignment(newAssignment);
-  };
-
-  const handleDeleteAssignment = (index) => {
-    const list1 = assignment.slice(0, index);
-    const list2 = assignment.slice(index + 1);
-    const newAssignment = list1.concat(list2);
-    setAssignment(newAssignment);
-    dispatch({
-      type: "ASSIGNMENT_REMOVE",
-      payload: newAssignment,
+  const handleDeleteAssignment = (index, data) => {
+    return new Promise((resolve,reject) => {
+      deleteAssignment(data).then(res => {
+        console.log(res);
+        if (res.data.message === "DELETE_SUCCESSFUL") {
+          const list1 = assignments.slice(0, index);
+          const list2 = assignments.slice(index + 1);
+          const newAssignment = list1.concat(list2);
+          handleAssignmentsChange(newAssignment);
+          resolve(true);
+        }
+        else resolve(false);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      })
+      
     });
   };
 
-  const handleCreateNewAssignment = (e) => {
-    e.preventDefault();
-    if (!(newAssignmentTitle && newAssignmentGrade)) return;
-    const newId = (assignment.length + 1).toString();
-    const newAssignment = {
-      id: newId,
-      title: newAssignmentTitle,
-      grade: newAssignmentGrade,
-    };
-    const newAssignmentList = [...assignment];
-    newAssignmentList.push(newAssignment);
-    setAssignment(newAssignmentList);
-    setNewAssignmentGrade("");
-    setNewAssignmentTitle("");
-    dispatch({
-      type: "ASSIGNMENT_UPDATE",
-      payload: newAssignmentList,
+  const handleCreateNewAssignment = (data) => {
+    return new Promise((resolve,reject) => {
+      data.courseId = courseId;
+      createAssignment(data).then(res => {
+        const newAssignment = res.data.assignment;
+        const newAssignmentList = [...assignments];
+        newAssignmentList.push(newAssignment);
+        handleAssignmentsChange(newAssignmentList);
+        resolve(true);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      })
     });
+    
   };
 
   return (
@@ -92,23 +96,11 @@ function Assignment() {
       >
         <ListAssignment
           onDragEnd={onDragEnd}
-          assignment={assignment}
-          onEditModeIndex={onEditModeIndex}
-          tempAssignmentTitle={tempAssignmentTitle}
-          setTempAssignmentTitle={setTempAssignmentTitle}
-          tempAssignmentGrade={tempAssignmentGrade}
-          setTempAssignmentGrade={setTempAssignmentGrade}
-          handleSaveAssignment={handleSaveAssignment}
-          handleEditAssignment={handleEditAssignment}
+          assignment={assignments}
+          handleUpdateAssignment={handleUpdateAssignment}
           handleDeleteAssignment={handleDeleteAssignment}
         />
-        <NewAssignment
-          handleCreateNewAssignment={handleCreateNewAssignment}
-          newAssignmentTitle={newAssignmentTitle}
-          setNewAssignmentTitle={setNewAssignmentTitle}
-          newAssignmentGrade={newAssignmentGrade}
-          setNewAssignmentGrade={setNewAssignmentGrade}
-        />
+        <NewAssignment handleCreateNewAssignment={handleCreateNewAssignment} />
       </div>
     </>
   );

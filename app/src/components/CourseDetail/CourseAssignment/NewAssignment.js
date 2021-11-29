@@ -1,14 +1,31 @@
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { IconButton, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 
-function NewAssignment({
-  handleCreateNewAssignment,
-  newAssignmentTitle,
-  setNewAssignmentTitle,
-  newAssignmentGrade,
-  setNewAssignmentGrade,
-}) {
+function NewAssignment({ handleCreateNewAssignment }) {
+  const [name, setName] = useState("");
+  const [weight, setWeight] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name || !weight) {
+      toast.info("Vui lòng nhập đủ thông tin!");
+    }
+    else {
+      const data = { name, weight }
+      handleCreateNewAssignment(data).then(successful => {
+        if (successful) {
+          toast.success("Thêm mới thành công!");
+          setName("");
+          setWeight("");
+        } else {
+          toast.error("Thêm mới thất bại!");
+        }
+      });
+    }
+  };
+
   return (
     <div
       style={{
@@ -25,17 +42,17 @@ function NewAssignment({
       >
         Bài tập mới
       </Typography>
-      <form onSubmit={handleCreateNewAssignment} style={{ display: "flex" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex" }}>
         <div style={{ width: "90%", margin: "0 0 16px 16px" }}>
           <TextField
             variant="standard"
             label="Tên"
             name="title"
-            value={newAssignmentTitle}
+            value={name}
             fullWidth
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentTitle(e.target.value);
+              setName(e.target.value);
             }}
           />
           <TextField
@@ -45,10 +62,10 @@ function NewAssignment({
             size="medium"
             name="grade"
             fullWidth
-            value={newAssignmentGrade}
+            value={weight}
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentGrade(e.target.value);
+              setWeight(e.target.value);
             }}
           />
         </div>

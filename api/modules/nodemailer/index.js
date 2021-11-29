@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-const URL = 'http://localhost:3001';
+const URL = process.env.FRONTEND_URL;
 //const URL = 'https://midterm-classroom-app.netlify.app';
 
 const transporter = nodemailer.createTransport({

@@ -1,8 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API_URL = "http://localhost:3000/auth";
-//const API_URL = "https://midterm-classroom-api.herokuapp.com/auth";
+const API_URL = process.env.REACT_APP_BACKEND_URL + "/auth";
 
 
 export function verifyGoogleToken(tokenId) {

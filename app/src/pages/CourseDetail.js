@@ -7,10 +7,17 @@ import CourseInfo from "../components/CourseDetail/CourseInfo/";
 import CoursePeople from "../components/CourseDetail/CoursePeople/";
 import CourseSetting from "../components/CourseDetail/CourseSetting";
 import { getOneCourse } from "../services/course";
+import { getAssignments } from "../services/assignment";
 
 export default function CourseDetail() {
   const { id } = useParams();
   const [course, setCourse] = useState({});
+
+  const [assignments, setAssignments] = useState([]);
+
+  const handleAssignmentsChange = (newAssignments) => {
+    setAssignments([...newAssignments]);
+  };
 
   useEffect(() => {
     getOneCourse(id).then((res) => {
@@ -21,6 +28,7 @@ export default function CourseDetail() {
         toast.warning(res.data.message);
       }
     });
+    getAssignments(id).then((res) => setAssignments([...res.data.assignments]));
     return () => {
       setCourse({});
     };
@@ -32,10 +40,19 @@ export default function CourseDetail() {
 
       <Routes>
         <Route path="/*" element={<Navigate to="/404" />} />
-        <Route path="info" element={<CourseInfo role={course.role} course={course} />} />
+        <Route path="info" element={<CourseInfo role={course.role} course={course} assignments={assignments} />} />
         {/* <Route path="grades" /> */}
         <Route path="people" element={<CoursePeople course={course} />} />
-        <Route path="assignment" element={<CourseAssignment />} />
+        <Route
+          path="assignment"
+          element={
+            <CourseAssignment
+              courseId={id}
+              assignments={assignments}
+              handleAssignmentsChange={handleAssignmentsChange}
+            />
+          }
+        />
         <Route
           path="setting"
           element={
