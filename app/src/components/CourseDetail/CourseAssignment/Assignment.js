@@ -2,11 +2,12 @@ import React from "react";
 import ListAssignment from "./ListAssignment";
 import NewAssignment from "./NewAssignment";
 
-function Assignment({ assignments, handleAssignmentsChange }) {
-  console.log(assignments);
+import { updateAssignmentOrder, updateAssignment, createAssignment, deleteAssignment } from '../../../services/assignment';
+
+
+function Assignment({ courseId, assignments, handleAssignmentsChange }) {
 
   const onDragEnd = async (result) => {
-    console.log(result);
     if (!result.destination) return;
     const { source, destination } = result;
     if (source.index === destination.index) return;
@@ -16,50 +17,69 @@ function Assignment({ assignments, handleAssignmentsChange }) {
     copiedItems.splice(destination.index, 0, removed);
     handleAssignmentsChange(copiedItems);
 
-    // const firstIndex =
-    //   source.index < destination.index
-    //     ? source.index + 1
-    //     : destination.index + 1;
-    // const secondIndex =
-    //   source.index < destination.index
-    //     ? destination.index + 1
-    //     : source.index + 1;
-    // console.log(firstIndex, secondIndex);
-    // updateAssignmentsOrder
+    const data = {
+      courseId,
+      sourceIndex: source.index + 1,
+      destinationIndex: destination.index + 1
+    }
+    updateAssignmentOrder(data).catch(err => console.log(err));
+
   };
 
-  const handleSaveAssignment = (index, name, weight) => {
-    const currentAssignment = { ...assignments[index] };
-    currentAssignment.name = name;
-    currentAssignment.weight = weight;
-
-    const list1 = assignments.slice(0, index);
-    const list2 = assignments.slice(index + 1);
-    const newAssignment = list1.concat(currentAssignment).concat(list2);
-    handleAssignmentsChange(newAssignment);
-    // updateAssignment
+  const handleUpdateAssignment = (index, data) => {
+    return new Promise((resolve,reject) => {
+      updateAssignment(data).then(res => {
+        const currentAssignment = { ...assignments[index] };
+        currentAssignment.name = data.name;
+        currentAssignment.weight = data.weight;
+  
+        const list1 = assignments.slice(0, index);
+        const list2 = assignments.slice(index + 1);
+        const newAssignment = list1.concat(currentAssignment).concat(list2);
+        handleAssignmentsChange(newAssignment);
+        resolve(true);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      });
+    });
   };
 
-  const handleDeleteAssignment = (index) => {
-    const list1 = assignments.slice(0, index);
-    const list2 = assignments.slice(index + 1);
-    const newAssignment = list1.concat(list2);
-    handleAssignmentsChange(newAssignment);
-    // deleteAssignment
+  const handleDeleteAssignment = (index, data) => {
+    return new Promise((resolve,reject) => {
+      deleteAssignment(data).then(res => {
+        console.log(res);
+        if (res.data.message === "DELETE_SUCCESSFUL") {
+          const list1 = assignments.slice(0, index);
+          const list2 = assignments.slice(index + 1);
+          const newAssignment = list1.concat(list2);
+          handleAssignmentsChange(newAssignment);
+          resolve(true);
+        }
+        else resolve(false);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      })
+      
+    });
   };
 
-  const handleCreateNewAssignment = (name, weight) => {
-    if (!(name && weight)) return;
-    const newId = (assignments.length + 1).toString();
-    const newAssignment = {
-      _id: newId,
-      name: name,
-      weight: weight,
-    };
-    const newAssignmentList = [...assignments];
-    newAssignmentList.push(newAssignment);
-    handleAssignmentsChange(newAssignmentList);
-    // createAssignment
+  const handleCreateNewAssignment = (data) => {
+    return new Promise((resolve,reject) => {
+      data.courseId = courseId;
+      createAssignment(data).then(res => {
+        const newAssignment = res.data.assignment;
+        const newAssignmentList = [...assignments];
+        newAssignmentList.push(newAssignment);
+        handleAssignmentsChange(newAssignmentList);
+        resolve(true);
+      }).catch(err => {
+        console.log(err);
+        resolve(false);
+      })
+    });
+    
   };
 
   return (
@@ -77,7 +97,7 @@ function Assignment({ assignments, handleAssignmentsChange }) {
         <ListAssignment
           onDragEnd={onDragEnd}
           assignment={assignments}
-          handleSaveAssignment={handleSaveAssignment}
+          handleUpdateAssignment={handleUpdateAssignment}
           handleDeleteAssignment={handleDeleteAssignment}
         />
         <NewAssignment handleCreateNewAssignment={handleCreateNewAssignment} />

@@ -18,12 +18,14 @@ export default function CourseDetail() {
   );
 
   const [assignments, setAssignments] = useState([]);
+
   const handleAssignmentsChange = (newAssignments) => {
-    setAssignments(newAssignments);
+    setAssignments([...newAssignments]);
   }
 
   useEffect(() => {
-    getAssignments(id).then(res => setAssignments(res.data.assignments));
+    
+    getAssignments(id).then(res => setAssignments([...res.data.assignments]));
 
     dispatch(async (dispatch) => {
       return getOneCourse(id).then((res) => {
@@ -53,7 +55,13 @@ export default function CourseDetail() {
         <Route path="info" element={<CourseInfo role={role} assignments={assignments} />} />
         {/* <Route path="grades" /> */}
         <Route path="people" element={<CoursePeople />} />
-        <Route path="assignment" element={<CourseAssignment assignments={assignments} handleAssignmentsChange={handleAssignmentsChange} />} />
+        <Route path="assignment" element={
+          <CourseAssignment
+            courseId={id}
+            assignments={assignments}
+            handleAssignmentsChange={handleAssignmentsChange}
+          />}
+        />
         <Route
           path="setting"
           element={

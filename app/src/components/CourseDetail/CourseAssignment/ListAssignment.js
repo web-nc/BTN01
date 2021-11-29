@@ -5,7 +5,7 @@ import AssignmentCard from "./AssignmentCard";
 function ListAssignment({
   onDragEnd,
   assignment,
-  handleSaveAssignment,
+  handleUpdateAssignment,
   handleDeleteAssignment,
 }) {
   return (
@@ -28,7 +28,7 @@ function ListAssignment({
                     key={item._id}
                     item={item}
                     index={index}
-                    handleSaveAssignment={handleSaveAssignment}
+                    handleUpdateAssignment={handleUpdateAssignment}
                     handleDeleteAssignment={handleDeleteAssignment}
                   />
                 );

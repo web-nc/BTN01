@@ -11,12 +11,12 @@ export function createAssignment({ courseId, name, weight }) {
     return axios.post(API_URL + '/' + courseId, { name, weight });
 }
 
-export function updateAssignmentOrder({ courseId, firstIndex, secondIndex }) {
-    return axios.post(API_URL + '/order/' + courseId, { firstIndex, secondIndex });
+export function updateAssignmentOrder({ courseId, sourceIndex, destinationIndex }) {
+    return axios.put(API_URL + '/order/' + courseId, { sourceIndex, destinationIndex });
 }
 
 export function updateAssignment({ id, name, weight }) {
-    return axios.post(API_URL + '/' + id, { name, weight });
+    return axios.put(API_URL + '/' + id, { name, weight });
 }
 
 export function deleteAssignment({ id }) {

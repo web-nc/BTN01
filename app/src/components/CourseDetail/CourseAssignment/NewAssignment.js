@@ -1,16 +1,29 @@
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { IconButton, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 function NewAssignment({ handleCreateNewAssignment }) {
-  const [newAssignmentName, setNewAssignmentName] = useState("");
-  const [newAssignmentWeight, setNewAssignmentWeight] = useState("");
+  const [name, setName] = useState("");
+  const [weight, setWeight] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleCreateNewAssignment(newAssignmentName, newAssignmentWeight);
-    setNewAssignmentName("");
-    setNewAssignmentWeight("");
+    if (!name || !weight) {
+      toast.info("Vui lòng nhập đủ thông tin!");
+    }
+    else {
+      const data = { name, weight }
+      handleCreateNewAssignment(data).then(successful => {
+        if (successful) {
+          toast.success("Thêm mới thành công!");
+          setName("");
+          setWeight("");
+        } else {
+          toast.error("Thêm mới thất bại!");
+        }
+      });
+    }
   };
 
   return (
@@ -35,11 +48,11 @@ function NewAssignment({ handleCreateNewAssignment }) {
             variant="standard"
             label="Tên"
             name="title"
-            value={newAssignmentName}
+            value={name}
             fullWidth
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentName(e.target.value);
+              setName(e.target.value);
             }}
           />
           <TextField
@@ -49,10 +62,10 @@ function NewAssignment({ handleCreateNewAssignment }) {
             size="medium"
             name="grade"
             fullWidth
-            value={newAssignmentWeight}
+            value={weight}
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentWeight(e.target.value);
+              setWeight(e.target.value);
             }}
           />
         </div>

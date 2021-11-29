@@ -39,7 +39,8 @@ export default {
                 if (e) {
                     return res.status(500).json({ message: e });
                 }
-                res.status(200).json({ assignment: assignment });
+                let result = (({_id, course, name, weight}) => ({_id, course, name, weight}))(assignment);
+                res.status(200).json({ assignment: result });
             }
             );
 
@@ -51,22 +52,33 @@ export default {
 
     updateAssignmentOrder: async (req, res) => {
         const courseId = req.params.courseId;
-        const { firstIndex, secondIndex } = req.body;
-
+        let { sourceIndex, destinationIndex } = req.body;
+        
         const course = Course.findOne({ _id: courseId })
         .then(async (course) => {
             if (!course) {
                 return res.status(500).json({ message: 'INCORRECT_COURSEID' });
             }
-            const lastElement = await Assignment.findOne({ course: courseId, order: secondIndex });
-            
-            Assignment.updateMany(
-                { course: courseId, order: { $gte: firstIndex, $lt: secondIndex } },
-                {$inc : {order : 1} }
-            ).then(() => {
-                lastElement.order = firstIndex;
-                lastElement.save();
-            });
+            console.log(sourceIndex, destinationIndex);
+            if (sourceIndex < destinationIndex) {
+                const firstElement = await Assignment.findOne({ course: courseId, order: sourceIndex });
+                Assignment.updateMany(
+                    { course: courseId, order: { $gt: sourceIndex, $lte: destinationIndex } },
+                    { $inc : {order : -1} }
+                ).then(() => {
+                    firstElement.order = destinationIndex;
+                    firstElement.save();
+                });
+            } else {
+                const lastElement = await Assignment.findOne({ course: courseId, order: sourceIndex });
+                Assignment.updateMany(
+                    { course: courseId, order: { $gte: destinationIndex, $lt: sourceIndex } },
+                    { $inc : {order : 1} }
+                ).then(() => {
+                    lastElement.order = destinationIndex;
+                    lastElement.save();
+                });
+            }
 
             return res.status(200).json({ message: 'UPDATE_SUCCESSFUL' });
         })
@@ -79,7 +91,7 @@ export default {
         const _id = req.params.id;
         const userId = req.user._id;
         const { name, weight } = req.body;
-    
+        
         const assignment = await Assignment.findOne({ _id: _id });
         if (!assignment) {
             return res.status(500).json({ message: 'INCORRECT_ID' });

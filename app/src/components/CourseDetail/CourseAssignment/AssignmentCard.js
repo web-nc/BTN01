@@ -1,28 +1,63 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from '@mui/icons-material/Cancel';
 import { IconButton, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import { toast } from "react-toastify";
 
 function AssignmentCard({
   item,
   index,
-  handleSaveAssignment,
+  handleUpdateAssignment,
   handleDeleteAssignment,
 }) {
-  const [onEditMode, setOnEditMode] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(item.name);
   const [weight, setWeight] = useState(item.weight);
-
-  const handleSave = () => {
-    setOnEditMode(true);
-    handleSaveAssignment(index, name, weight);
+  
+  const handleUpdate = () => {
+    if (!name || !weight) {
+      toast.info("Vui lòng nhập đủ thông tin!");
+    }
+    if (name===item.name && weight===item.weight) {
+      toast.info("Vui lòng thay đổi thông tin!");
+    }
+    else {
+      const data = {
+        id: item._id, name, weight
+      }
+      handleUpdateAssignment(index, data).then(successful => {
+        if (successful) {
+          toast.success("Cập nhật thành công!");
+        }
+        else {
+          toast.error("Cập nhật thất bại!");
+        }
+      });
+      setIsEditing(false);
+    }
   };
 
-  const handleOpenEdit = () => {
-    setOnEditMode(false);
-  };
+  const handleDelete = () => {
+    handleDeleteAssignment(index, { id: item._id }).then(successful => {
+      if (successful) {
+        toast.success("Xoá bài tập thành công!");
+      }
+      else {
+        toast.error("Xoá bài tập thất bại!");
+      }
+    });
+  }
+
+  const handleEditModeChange = () => {
+    if (isEditing) {
+      setName(item.name);
+      setWeight(item.weight);
+    }
+    setIsEditing(!isEditing);
+  }
 
   return (
     <Draggable key={item._id} draggableId={item._id} index={index}>
@@ -43,32 +78,38 @@ function AssignmentCard({
               ...provided.draggableProps.style,
             }}
           >
-            <div style={{ width: "90%" }}>
-              <TextField
-                disabled={onEditMode}
-                variant="standard"
-                label="Tên"
-                value={name}
-                fullWidth
-                margin="normal"
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-              />
-              <TextField
-                disabled={onEditMode}
-                variant="standard"
-                label="Điểm"
-                type="number"
-                size="medium"
-                fullWidth
-                value={weight}
-                onChange={(e) => {
-                  setWeight(e.target.value);
-                }}
-                margin="normal"
-              />
-            </div>
+          <div style={{ width: "90%" }}>
+            <TextField
+              required
+              InputProps={{
+                readOnly: isEditing ? false : true,
+              }}
+              variant={isEditing ? "outlined" : "standard"}
+              label="Tên"
+              value={name}
+              fullWidth
+              margin="normal"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+            <TextField
+              required
+              InputProps={{
+                readOnly: isEditing ? false : true,
+              }}
+              variant={isEditing ? "outlined" : "standard"}
+              label="Điểm"
+              type="number"
+              size="medium"
+              fullWidth
+              value={weight}
+              onChange={(e) => {
+                setWeight(e.target.value);
+              }}
+              margin="normal"
+            />
+          </div>
             <div
               style={{
                 maxWidth: "70px",
@@ -80,38 +121,25 @@ function AssignmentCard({
                 marginRight: 5,
               }}
             >
-              {onEditMode ? (
-                <IconButton
-                  onClick={handleOpenEdit}
-                  sx={{ height: "50%", width: "100%" }}
-                >
+              {!isEditing ? (
+                <IconButton onClick={handleEditModeChange} sx={{ height: "50%", width: "100%" }}>
                   <EditIcon />
                 </IconButton>
               ) : (
-                <IconButton
-                  onClick={handleSave}
-                  sx={{
-                    height: "50%",
-                    width: "100%",
-                    color: "#3498db",
-                  }}
-                >
+                <IconButton onClick={handleUpdate} sx={{ height: "50%", width: "100%", color: "#3498db"}}>
                   <SaveIcon />
                 </IconButton>
               )}
 
-              <IconButton
-                onClick={() => {
-                  handleDeleteAssignment(index);
-                }}
-                sx={{
-                  height: "50%",
-                  width: "100%",
-                  color: "#e74c3c",
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
+              {!isEditing ? (
+                <IconButton sx={{ height: "50%", width: "100%", color: "#e74c3c"}} onClick={handleDelete}>
+                    <DeleteIcon />
+                </IconButton>
+              ) : (
+                <IconButton sx={{ height: "50%", width: "100%", color: "#3498db", }} onClick={handleEditModeChange}>
+                    <CancelIcon />
+                </IconButton>
+              )}
             </div>
           </div>
         );
