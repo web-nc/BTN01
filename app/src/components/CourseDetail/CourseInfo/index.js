@@ -1,15 +1,13 @@
 import { Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
-import { useSelector } from "react-redux";
 import CodeCard from "./InfoCode";
 import InfoGrade from "./InfoGrade";
 import InfoHeader from "./InfoHeader";
 import InvitationCard from "./InvitationCard";
 
-export default function CourseInfo({ role }) {
+export default function CourseInfo({ role, course }) {
   const classes = useStyles();
-  const course = useSelector((state) => state.course.item);
 
   return (
     <Grid

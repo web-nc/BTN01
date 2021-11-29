@@ -1,19 +1,10 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Grid,
-  Paper,
-} from "@mui/material";
+import { Card, CardContent, CardHeader, Divider, Grid, Paper } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
 import StudentList from "./StudentList";
 import TeacherList from "./TeacherList";
 
-export default function CoursePeople() {
-  const { teachers, students } = useSelector((state) => state.course.item);
-  const course = useSelector((state) => state.course.item);
+export default function CoursePeople({ course }) {
+  const { teachers, students } = course;
   const paperStyle = {
     width: "60%",
     margin: "30px auto",
@@ -31,9 +22,7 @@ export default function CoursePeople() {
                   [{course.briefName}] {course.name}
                 </strong>
               }
-              subheader={
-                "Người tạo lớp: " + (course.owner ? course.owner.name : "")
-              }
+              subheader={"Người tạo lớp: " + (course.owner ? course.owner.name : "")}
             />
             <Divider></Divider>
             <CardContent>
