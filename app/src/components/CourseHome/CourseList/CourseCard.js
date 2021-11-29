@@ -119,14 +119,12 @@ export default function CourseCard({ id, name, owner, briefName, details, role, 
           </ExpandMore>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
+          <CardContent sx={{ maxHeight: "8rem", overflowY: "scroll" }}>
             <Typography gutterBottom variant="h6" component="div">
               Thông tin chi tiết
             </Typography>
 
-            <Typography variant="body2" color="text.secondary">
-              {details}
-            </Typography>
+            <div dangerouslySetInnerHTML={{ __html: details }} />
           </CardContent>
         </Collapse>
       </Card>

@@ -3,7 +3,7 @@ import React from "react";
 import DeleteCourse from "./DeleteCourse";
 import EditInfoCourse from "./EditInfoCourse";
 
-export default function Settings({ role, name, details, briefName, id }) {
+export default function Settings({ role, name, details, briefName, id, handleUpdateCourse }) {
   return (
     <Box sx={{ display: "block", alignItems: "center" }}>
       <EditInfoCourse
@@ -11,6 +11,7 @@ export default function Settings({ role, name, details, briefName, id }) {
         details={details}
         briefName={briefName}
         id={id}
+        handleUpdateCourse={handleUpdateCourse}
       />
       {role === "OWNER" && <DeleteCourse id={id} />}
     </Box>

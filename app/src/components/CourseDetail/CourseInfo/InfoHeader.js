@@ -20,8 +20,8 @@ export default function InfoHeader({ courseName, briefName, details }) {
         </div>
       </CardActionArea>
       {dropDown && (
-        <CardContent>
-          <Typography variant="body2">{details}</Typography>
+        <CardContent sx={{ maxHeight: "14rem", overflowY: "scroll" }}>
+          <div dangerouslySetInnerHTML={{ __html: details }} />
         </CardContent>
       )}
     </Card>

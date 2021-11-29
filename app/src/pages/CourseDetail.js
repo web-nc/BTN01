@@ -45,6 +45,7 @@ export default function CourseDetail() {
               details={course.details}
               briefName={course.briefName}
               id={id}
+              handleUpdateCourse={(payload) => setCourse((prevState) => ({ ...prevState, ...payload }))}
             />
           }
         />
