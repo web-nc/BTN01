@@ -10,11 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteOneCourse } from "../../../services/course";
 
 function DeleteCourse({ id }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const paperStyle = {
     width: "60%",
     margin: "30px auto",
@@ -45,6 +47,7 @@ function DeleteCourse({ id }) {
   const deleteCourse = () => {
     deleteOneCourse(id)
       .then((res) => {
+        dispatch({ type: "COURSES_DECREMENT", payload: res.data.payload });
         navigate("/");
       })
       .catch((error) => {

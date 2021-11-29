@@ -46,7 +46,7 @@ export default function FormDialog({ openDialog, handleDialogClose }) {
   return (
     <Dialog open={openDialog} onClose={handleClose}>
       <form ref={formRef} action="/" method="POST" onSubmit={handleSubmit}>
-        <DialogTitle>Create class</DialogTitle>
+        <DialogTitle>Tạo lớp</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

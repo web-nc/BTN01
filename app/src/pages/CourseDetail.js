@@ -8,10 +8,12 @@ import CoursePeople from "../components/CourseDetail/CoursePeople/";
 import CourseSetting from "../components/CourseDetail/CourseSetting";
 import { getOneCourse } from "../services/course";
 import { getAssignments } from "../services/assignment";
+import { useDispatch } from "react-redux";
 
 export default function CourseDetail() {
   const { id } = useParams();
   const [course, setCourse] = useState({});
+  const dispatch = useDispatch();
 
   const [assignments, setAssignments] = useState([]);
 
@@ -62,7 +64,10 @@ export default function CourseDetail() {
               details={course.details}
               briefName={course.briefName}
               id={id}
-              handleUpdateCourse={(payload) => setCourse((prevState) => ({ ...prevState, ...payload }))}
+              handleUpdateCourse={(payload) => {
+                setCourse((prevState) => ({ ...prevState, ...payload }));
+                dispatch({ type: "COURSES_UPDATED", payload });
+              }}
             />
           }
         />

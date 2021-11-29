@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,10 +11,27 @@ import ProfilePage from "../pages/ProfilePage";
 import RegisterPage from "../pages/Register";
 import StudentConfirmPage from "../pages/StudentConfirmPage";
 import TeacherConfirmPage from "../pages/TeacherConfirmPage";
+import { getCourses } from "../services/course";
 import { AuthRoute, PrivateRoute } from "./Routes";
 
 export default function MainRoute() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (loggedIn) {
+      dispatch(async (dispatch) => {
+        return getCourses().then((res) => {
+          dispatch({ type: "COURSES_FETCHED", payload: res.data.payload });
+        });
+      });
+    }
+
+    return () => {
+      dispatch({ type: "COURSES_EMPTY" });
+    };
+  }, [dispatch, loggedIn]);
+
   return (
     <div>
       <Routes>

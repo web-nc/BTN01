@@ -14,6 +14,7 @@ export default function RichTextEditor({ editorState, setEditorState }) {
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
         placeholder="Chi tiết.."
+        editorStyle={{ maxHeight: "8rem", minHeight: "6rem" }}
         onEditorStateChange={(state) => setEditorState(state)}
         toolbar={{
           options: ["inline", "blockType", "fontSize", "fontFamily", "list", "textAlign", "colorPicker", "history"],
