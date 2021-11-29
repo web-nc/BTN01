@@ -1,14 +1,18 @@
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { IconButton, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 
-function NewAssignment({
-  handleCreateNewAssignment,
-  newAssignmentTitle,
-  setNewAssignmentTitle,
-  newAssignmentGrade,
-  setNewAssignmentGrade,
-}) {
+function NewAssignment({ handleCreateNewAssignment }) {
+  const [newAssignmentName, setNewAssignmentName] = useState("");
+  const [newAssignmentWeight, setNewAssignmentWeight] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreateNewAssignment(newAssignmentName, newAssignmentWeight);
+    setNewAssignmentName("");
+    setNewAssignmentWeight("");
+  };
+
   return (
     <div
       style={{
@@ -25,17 +29,17 @@ function NewAssignment({
       >
         Bài tập mới
       </Typography>
-      <form onSubmit={handleCreateNewAssignment} style={{ display: "flex" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex" }}>
         <div style={{ width: "90%", margin: "0 0 16px 16px" }}>
           <TextField
             variant="standard"
             label="Tên"
             name="title"
-            value={newAssignmentTitle}
+            value={newAssignmentName}
             fullWidth
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentTitle(e.target.value);
+              setNewAssignmentName(e.target.value);
             }}
           />
           <TextField
@@ -45,10 +49,10 @@ function NewAssignment({
             size="medium"
             name="grade"
             fullWidth
-            value={newAssignmentGrade}
+            value={newAssignmentWeight}
             margin="normal"
             onChange={(e) => {
-              setNewAssignmentGrade(e.target.value);
+              setNewAssignmentWeight(e.target.value);
             }}
           />
         </div>

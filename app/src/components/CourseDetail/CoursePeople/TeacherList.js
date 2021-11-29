@@ -40,9 +40,8 @@ export default function TeacherList({ teachers, owner }) {
       {teachers &&
         teachers.length > 0 &&
         teachers.map((teacher, index) => (
-          <div className="teacher">
+          <div className="teacher" key={teacher._id}>
             <CardHeader
-              key={teacher._id}
               avatar={
                 <Avatar style={color()}>
                   {teacher.name.split(" ").map((s) => s[0])}

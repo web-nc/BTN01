@@ -16,9 +16,8 @@ export default function StudentList({ students }) {
       </Typography>
       {students && students.length ? (
         students.map((student, index) => (
-          <div>
+          <div key={student._id}>
             <CardHeader
-              key={student._id}
               avatar={
                 <Avatar style={color()}>
                   {student.name.split(" ").map((s) => s[0])}

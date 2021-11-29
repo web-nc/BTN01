@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import ListAssignment from "./ListAssignment";
 import NewAssignment from "./NewAssignment";
 
 function Assignment({ assignments, handleAssignmentsChange }) {
-  const [newAssignmentTitle, setNewAssignmentTitle] = useState("");
-  const [newAssignmentGrade, setNewAssignmentGrade] = useState("");
-  const [onEditModeIndex, setOnEditModeIndex] = useState(-1);
-  const [tempAssignmentTitle, setTempAssignmentTitle] = useState("");
-  const [tempAssignmentGrade, setTempAssignmentGrade] = useState("");
+  console.log(assignments);
 
   const onDragEnd = async (result) => {
+    console.log(result);
     if (!result.destination) return;
     const { source, destination } = result;
     if (source.index === destination.index) return;
@@ -18,23 +15,23 @@ function Assignment({ assignments, handleAssignmentsChange }) {
     const [removed] = copiedItems.splice(source.index, 1);
     copiedItems.splice(destination.index, 0, removed);
     handleAssignmentsChange(copiedItems);
-    const firstIndex = (source.index < destination.index) ? source.index + 1 : destination.index + 1;
-    const secondIndex = (source.index < destination.index) ? destination.index + 1 : source.index + 1;
-    console.log(firstIndex, secondIndex);
+
+    // const firstIndex =
+    //   source.index < destination.index
+    //     ? source.index + 1
+    //     : destination.index + 1;
+    // const secondIndex =
+    //   source.index < destination.index
+    //     ? destination.index + 1
+    //     : source.index + 1;
+    // console.log(firstIndex, secondIndex);
     // updateAssignmentsOrder
   };
 
-  const handleEditAssignment = (index) => {
-    setOnEditModeIndex(index);
-    setTempAssignmentTitle(assignments[index].title);
-    setTempAssignmentGrade(assignments[index].grade);
-  };
-
-  const handleSaveAssignment = (index) => {
-    setOnEditModeIndex(-1);
+  const handleSaveAssignment = (index, name, weight) => {
     const currentAssignment = { ...assignments[index] };
-    currentAssignment.title = tempAssignmentTitle;
-    currentAssignment.grade = tempAssignmentGrade;
+    currentAssignment.name = name;
+    currentAssignment.weight = weight;
 
     const list1 = assignments.slice(0, index);
     const list2 = assignments.slice(index + 1);
@@ -51,20 +48,17 @@ function Assignment({ assignments, handleAssignmentsChange }) {
     // deleteAssignment
   };
 
-  const handleCreateNewAssignment = (e) => {
-    e.preventDefault();
-    if (!(newAssignmentTitle && newAssignmentGrade)) return;
+  const handleCreateNewAssignment = (name, weight) => {
+    if (!(name && weight)) return;
     const newId = (assignments.length + 1).toString();
     const newAssignment = {
-      id: newId,
-      title: newAssignmentTitle,
-      grade: newAssignmentGrade,
+      _id: newId,
+      name: name,
+      weight: weight,
     };
     const newAssignmentList = [...assignments];
     newAssignmentList.push(newAssignment);
     handleAssignmentsChange(newAssignmentList);
-    setNewAssignmentGrade("");
-    setNewAssignmentTitle("");
     // createAssignment
   };
 
@@ -83,22 +77,10 @@ function Assignment({ assignments, handleAssignmentsChange }) {
         <ListAssignment
           onDragEnd={onDragEnd}
           assignment={assignments}
-          onEditModeIndex={onEditModeIndex}
-          tempAssignmentTitle={tempAssignmentTitle}
-          setTempAssignmentTitle={setTempAssignmentTitle}
-          tempAssignmentGrade={tempAssignmentGrade}
-          setTempAssignmentGrade={setTempAssignmentGrade}
           handleSaveAssignment={handleSaveAssignment}
-          handleEditAssignment={handleEditAssignment}
           handleDeleteAssignment={handleDeleteAssignment}
         />
-        <NewAssignment
-          handleCreateNewAssignment={handleCreateNewAssignment}
-          newAssignmentTitle={newAssignmentTitle}
-          setNewAssignmentTitle={setNewAssignmentTitle}
-          newAssignmentGrade={newAssignmentGrade}
-          setNewAssignmentGrade={setNewAssignmentGrade}
-        />
+        <NewAssignment handleCreateNewAssignment={handleCreateNewAssignment} />
       </div>
     </>
   );
