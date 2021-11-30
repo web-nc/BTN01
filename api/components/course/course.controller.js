@@ -350,7 +350,7 @@ export default {
     course.briefName = briefName;
     course.save();
 
-    const payload = { name: name, details: details, briefName: briefName };
+    const payload = { _id , name, details, briefName };
 
     res.status(200).json({
       payload: payload,
@@ -373,7 +373,7 @@ export default {
       if (err) {
         return res.status(500).json({ message: err });
       } else {
-        res.status(200).json({ message: "DELETE_SUCCESSFUL" });
+        res.status(200).json({ message: "DELETE_SUCCESSFUL", payload: docs });
       }
     });
   },

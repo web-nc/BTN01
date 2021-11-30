@@ -5,12 +5,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { joinCourse } from "../../../services/course";
+import { getCourses, joinCourse } from "../../../services/course";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 
 export default function JoinCourseDialog({ openDialog, handleDialogClose }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const formRef = useRef();
 
   const handleClose = () => {
@@ -30,7 +32,12 @@ export default function JoinCourseDialog({ openDialog, handleDialogClose }) {
       .then((res) => {
         console.log(res.status === 202);
         if (res.status === 200) {
-          toast.success('Tham gia lớp học thành công!');
+          dispatch(async (dispatch) => {
+            return getCourses().then((res) => {
+              dispatch({ type: "COURSES_REFRESHED", payload: res.data.payload });
+            });
+          });
+          toast.success("Tham gia lớp học thành công!");
           navigate("/course/" + res.data.payload._id + "/info");
         } else if (res.status === 202) {
           toast.warn(res.data.message);

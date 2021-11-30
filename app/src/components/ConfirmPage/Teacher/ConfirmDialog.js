@@ -1,15 +1,15 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Paper, Grid, Box, Typography, Button } from '@mui/material'
 
-import { joinCourse } from "../../../services/course";
+import { getCourses, joinCourse } from "../../../services/course";
 import CourseInfo from "../CourseInfo";
+import { useDispatch } from "react-redux";
 
-function ConfirmDialog({ inviteCode }) {
+function ConfirmDialog({ inviteCode, course }) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const course = useSelector((state) => state.course.item);
     const typoStyle =  {color: '#976363', marginBottom: '10px'};
     const logoStyle = {height: '100px', marginBottom: '10px'};
     const paperStyle={ width:'50%', margin:"30px auto", paddingBottom: '30px' };
@@ -17,6 +17,11 @@ function ConfirmDialog({ inviteCode }) {
     const handleConfirmJoin = () => {
         joinCourse(inviteCode, true)
             .then((res) => {
+                dispatch(async (dispatch) => {
+                    return getCourses().then((res) => {
+                        dispatch({ type: "COURSES_REFRESHED", payload: res.data.payload });
+                    });
+                });
                 navigate("/course/" + res.data.payload._id + "/info");
             })
             .catch((e) => {

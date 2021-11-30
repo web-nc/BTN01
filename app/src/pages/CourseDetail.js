@@ -31,9 +31,6 @@ export default function CourseDetail() {
       }
     });
     getAssignments(id).then((res) => setAssignments([...res.data.assignments]));
-    return () => {
-      setCourse({});
-    };
   }, [id]);
 
   return (

@@ -5,6 +5,7 @@ import {
   LEAVE_COURSE,
   COURSES_DECREMENT,
   COURSES_UPDATED,
+  COURSES_REFRESHED
 } from "../types";
 
 const removeOneCourse = (items, payload) => {
@@ -35,6 +36,11 @@ export default function reducer(state = initialState, action) {
         items: [],
       };
     case COURSES_FETCHED:
+      return {
+        ...state,
+        items: payload,
+      };
+    case COURSES_REFRESHED: //same as "fetched". But it is a different message just for debugging
       return {
         ...state,
         items: payload,
