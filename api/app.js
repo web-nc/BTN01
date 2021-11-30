@@ -37,7 +37,7 @@ mongoose.connect(process.env.DATABASE_URL,
       }
   );
 
-const whitelist = ['https://midterm-classroom-app.netlify.app', 'http://localhost:3001']
+const whitelist = ['https://midterm-classroom-app.netlify.app', 'http://localhost:3001', process.env.FRONTEND_URL]
 
 app.use(cors({
     credentials: true,
