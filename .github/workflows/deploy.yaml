@@ -23,4 +23,4 @@ jobs:
         heroku_email: ${{secrets.HEROKU_API_KEY}}
       env:
         HD_APP_BASE: "app"
-        HD_REACT_APP_BACKEND_URL: "https://btn01-api.herokuapp.com/"
+        HD_REACT_APP_BACKEND_URL: "https://btn01-api.herokuapp.com"
